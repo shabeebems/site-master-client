@@ -35,7 +35,7 @@ export default function LoginPage() {
       if(session) {
         checkGoogleAuth()
       }
-    }, [session])
+    }, [session, dispatch])
 
     const role: string = 'Contractor'
 
