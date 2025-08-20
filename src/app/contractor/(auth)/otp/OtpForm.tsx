@@ -186,7 +186,7 @@ const OtpForm = () => {
               </p>
             ) : (
               <p className="mt-2 text-center text-sm text-gray-600">
-                Didn't receive code?{" "}
+                Didn&apos;t receive code?{" "}
                 <button
                   type="button"
                   onClick={resend}

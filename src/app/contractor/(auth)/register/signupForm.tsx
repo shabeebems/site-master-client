@@ -18,6 +18,8 @@ import Loading from '@/app/components/Loading';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import axios, { AxiosError } from "axios"; // ✅ Added for error typing
+
 
 interface FormData {
   name: string;
@@ -26,9 +28,15 @@ interface FormData {
   confirmPassword: string;
 }
 
+// ✅ Type for form fields
+interface FormField {
+  name: keyof FormData;
+  type: string;
+  placeholder: string;
+}
+
 export default function SignupForm() {
 
-  // Make true while loading
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
@@ -39,62 +47,46 @@ export default function SignupForm() {
   });
 
   const router = useRouter();
-
-  // Define a custon dispatch hook
   const dispatch = useAppDispatch();
 
-  // Function will trigger while submitting
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Loading until complete
     setIsLoading(true);
 
     try {
-      // - Call API for signup
-      const response = await apiCheck(formData, 'auth/signup')
+      const response = await apiCheck(formData, 'auth/signup');
 
-      if(response.success) {
-
-        // Store a temporary cookie to get access of otp page
+      if (response.success) {
         Cookies.set('signup_verified', 'true', {
-          expires: new Date(Date.now() + 60 * 10000) // - 10 mins
+          expires: new Date(Date.now() + 60 * 10000) // 10 mins
         });
 
-        // Save form details to redux to store db after otp submition
-        dispatch(setUser(formData))
+        dispatch(setUser(formData));
 
-        // Passing success message
         toast.success(response.message, { position: "top-right" });
-
-        // Render otp page
         router.push('/contractor/otp');
 
       } else {
-        // Re-render register while any unexpected error happens
         router.push('/contractor/register');
       }
-      
-    } catch (error: any) {
-      // Passing error message (async functions handling 400 status errors in catch)
-      if (error.response) {
-        const { data } = error.response;
 
-        toast.error(data?.message || "Signup error, please try again", { position: "top-right" });
+    } catch (error) {
+      // ✅ Strong typing for axios error
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        const errorMessage = axiosError.response?.data?.message || "Signup error, please try again";
 
-        console.error("Signup error:", error.response);
+        toast.error(errorMessage, { position: "top-right" });
+        console.error("Signup error:", axiosError.response);
 
       } else {
-        // -- Handle unexpected errors
         toast.error("Network error, please try again!", { position: "top-right" });
         console.error("Signup failed:", error);
       }
 
     } finally {
-      // Loading disable after complete
       setIsLoading(false);
     }
-
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +98,8 @@ export default function SignupForm() {
     }));
   };
 
-  const formFields = [
+  // ✅ Strongly typed form fields
+  const formFields: FormField[] = [
     { name: 'name', type: 'text', placeholder: 'Name' },
     { name: 'email', type: 'email', placeholder: 'Email address' },
     { name: 'password', type: 'password', placeholder: 'Password' },
@@ -116,10 +109,8 @@ export default function SignupForm() {
   return (
     <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-white">
       <div className="w-full max-w-md mx-auto p-6 bg-white rounded-2xl shadow-xl space-y-8 animate-fadeIn">
-        {/* For passing messages */}
         <ToastContainer />
 
-        {/* Header Section */}
         <div className="text-center">
           <h2 className="text-4xl font-extrabold text-gray-900 tracking-tighter">
             <span className="bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
@@ -131,17 +122,16 @@ export default function SignupForm() {
           </p>
         </div>
 
-        {/* Form Section */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-5 rounded-md">
-            {formFields.map((field: any) => (
+            {formFields.map((field) => (
               <div key={field.name} className="relative">
                 <label htmlFor={field.name} className="sr-only">
                   {field.placeholder}
                 </label>
                 <input
                   {...field}
-                  value={formData[field.name as keyof FormData]}
+                  value={formData[field.name]}
                   onChange={handleChange}
                   required
                   className="w-full rounded-full border border-gray-300 py-3 px-5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
@@ -150,7 +140,6 @@ export default function SignupForm() {
             ))}
           </div>
 
-          {/* Submit Button */}
           <div>
             <button
               type="submit"
@@ -161,7 +150,6 @@ export default function SignupForm() {
             </button>
           </div>
 
-          {/* Sign In Link */}
           <p className="mt-2 text-center text-sm text-gray-600">
             Already have an account?{' '}
             <a href="/contractor/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
@@ -171,6 +159,5 @@ export default function SignupForm() {
         </form>
       </div>
     </div>
-
   );
 }

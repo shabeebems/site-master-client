@@ -1,27 +1,21 @@
 'use client'
 import React, { useEffect } from 'react'
 import Cookies from 'js-cookie';
-import Photos from '../../../components/AuthPhoto';
 import OtpForm from './OtpForm';
 import { useRouter } from 'next/navigation';
 
-
-const page = () => {
-  
+const Page = () => {
   const router = useRouter()
 
   useEffect(() => {
-      if (!Cookies.get('signup_verified')) {
-          router.push('/contractor/register')
-      }
-  }, [])
+    if (!Cookies.get('signup_verified')) {
+      router.push('/contractor/register')
+    }
+  }, [router])
 
   return (
-    // <div className="min-h-screen w-full flex flex-col md:flex-row">
-    //   <Photos />
-      <OtpForm />     
-    // </div>
+    <OtpForm />
   )
 }
 
-export default page
+export default Page

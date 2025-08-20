@@ -11,16 +11,16 @@ const ProtectWrapper = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
 
   useEffect(() => {
-        if(!protect.email) {
-          router.push('/contractor/login')
-        } else if(protect.role === 'Worker') {
-          router.push('/worker/dashboard')
-        }
-    }, [protect.email])
+    if(!protect.email) {
+      router.push('/contractor/login')
+    } else if(protect.role === 'Worker') {
+      router.push('/worker/dashboard')
+    }
+  }, [protect.email, protect.role, router])
 
-    if(!protect.email || protect.role === 'Worker') return null
+  if(!protect.email || protect.role === 'Worker') return null
 
-    return <>{children}</>
+  return <>{children}</>
 
 }
 

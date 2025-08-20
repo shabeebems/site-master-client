@@ -15,6 +15,7 @@ import { clearProtect } from '@/app/store/protect';
 
 // React icons
 import { BiLogOut } from "react-icons/bi";
+import Image from 'next/image';
 
 // Props to recieve datas from parent
 type NavbarProps = {
@@ -38,10 +39,14 @@ const Navbar: React.FC<NavbarProps> = ({ active }) => {
     <nav className="flex items-center justify-between p-5 bg-white shadow-md h-16">
       <h1 className="text-xl font-semibold text-blue-950">{active}</h1>
       <div className="flex items-center gap-6">
-          {/* <img src="/arrow.png" alt="Search" className="w-6 h-6 cursor-pointer" />
-          <img src="/arrow.png" alt="Search" className="w-6 h-6 cursor-pointer" /> */}
           <div className="flex items-center gap-2">
-            <img src="/profile.jpeg" alt="Profile" className="w-8 h-8 rounded-full cursor-pointer" />
+            <Image
+              src="/profile.jpeg"
+              alt="Profile"
+              width={32}   // required
+              height={32}  // required
+              className="w-8 h-8 rounded-full cursor-pointer"
+            />
             <span className="text-blue-950 font-medium hidden md:block">Shabeeb</span>
             <BiLogOut
               onClick={logout} 
