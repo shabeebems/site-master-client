@@ -1,7 +1,7 @@
 import apiClient from "@/lib/axiosClient";
 import axios from "axios";
 
-const SERVER_URI = process.env.NEXT_PUBLIC_API_BASE_URL
+const SERVER_URI = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
 // Check and validate datas
 export const apiCheck = async (data: object, route: string) => {

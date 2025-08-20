@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FaTasks } from "react-icons/fa";
 import AddModal from "./AddModal";
 import { fetchPaginationDetails, statusEdits } from "@/app/api/api";
 import { useRouter } from "next/navigation";
